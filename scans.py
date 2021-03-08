@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import spinmob as sp
+import matplotlib.pyplot as plt
 from . import data
 
 def de_interleave(img_in, dedouble = True):
