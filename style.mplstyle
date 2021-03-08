@@ -1,0 +1,46 @@
+lines.linewidth : 1.25
+lines.markersize : 2
+
+font.size: 13
+
+figure.figsize: 4,3
+
+# GGplot
+axes.prop_cycle: cycler('color', ['E24A33', '348ABD', '988ED5', '777777', 'FBC15E', '8EBA42', 'FFB5B8'])
+#                   #E24A33 : red
+#                   #348ABD : blue
+#                   #988ED5 : purple
+#                   #777777 : gray
+#                   #FBC15E : yellow
+#                   #8EBA42 : green
+#                   #FFB5B8 : pink
+
+axes.labelsize: medium
+axes.titlesize: large
+axes.grid: True
+axes.linewidth: 1.0
+axes.axisbelow: True
+
+grid.color: F0F0F0
+grid.linestyle: --
+grid.linewidth: 1
+
+xtick.direction: in
+xtick.major.width: 1
+xtick.major.size: 3
+xtick.minor.width: 0.75
+xtick.minor.size: 1.75
+xtick.top: True
+
+
+ytick.direction: in
+ytick.major.width: 1
+ytick.major.size: 3
+ytick.minor.width: 0.75
+ytick.minor.size: 1.75
+ytick.right: True
+
+legend.fancybox: True
+legend.handlelength: 1.0
+
+hist.bins: auto
