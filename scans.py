@@ -39,7 +39,7 @@ def plot_scan_raw(xpts,ypts,data,dedouble=True,convertunit=True,vmin=None,vmax=N
         vmax = np.max(data)
     levels = np.linspace(vmin, vmax, levels)
     
-    data = data.transpose()
+    #data = data.transpose()
     dx = np.mean(np.diff(xpts))
     xmesh = xpts - dx
     xmesh = np.append(xmesh, xpts[-1] + dx)
