@@ -1,10 +1,10 @@
 from distutils.core import setup
-setup(name = 'Rylab',
-      description = "Rigel's data handling and analysis tools",
+setup(name = 'CavSpy',
+      description = "Library for handling data from CAvity Sensing in Python.",
       author = "Rigel Zifkin",
       author_email = "rydgel.code@gmail.com",
-      url = "https://github.com/rydgel/rylab",
-      packages = ['rylab'],
-      package_dir = {'rylab' : '.'},
-      package_data = {'rylab' : ['style.mplstyle', 'minPar.so', 'minPar.dll']}
+      url = "https://github.com/rydgel/CavSpy",
+      packages = ['CavSpy'],
+      package_dir = {'CavSpy' : '.'},
+      package_data = {'CavSpy' : ['style.mplstyle', 'minPar.so', 'minPar.dll']}
      )

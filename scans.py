@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import spinmob as sp
+from . import data
 
 def de_interleave(img_in, dedouble = True):
     img_size = img_in.shape
@@ -29,7 +30,7 @@ def de_interleave(img_in, dedouble = True):
                 
     return img_1_out, img_2_out
 
-def plot_scan_data(xpts,ypts,data,dedouble=False,convertunit=True,vmin=None,vmax=None,levels=30,title="",**kwargs):
+def plot_scan_raw(xpts,ypts,data,dedouble=True,convertunit=True,vmin=None,vmax=None,levels=30,title="",**kwargs):
     cmap = "viridis"
     if vmin is None:
         vmin = np.min(data)
@@ -59,8 +60,8 @@ def plot_scan_data(xpts,ypts,data,dedouble=False,convertunit=True,vmin=None,vmax
         cbar_ax = fig.add_axes([0.88,0.15,0.025,0.7])
         fig.colorbar(im1,cax=cbar_ax,extend='both')
         for ax in axes:
-            ax.set_xlim([min(xpts),max(xpts)])
-            ax.set_ylim([min(ypts),max(ypts)])
+            ax.set_xlim([min(xmesh),max(xmesh)])
+            ax.set_ylim([min(ymesh),max(ymesh)])
         axes[0].set_title("Forward Scan")
         axes[1].set_title("Reverse Scan")
         if convertunit:
@@ -72,7 +73,7 @@ def plot_scan_data(xpts,ypts,data,dedouble=False,convertunit=True,vmin=None,vmax
             axes[1].set_xlabel("X Effective (V)")
             axes[0].set_ylabel("Y Effective (X)")
     else:
-        fig, ax = plt.subplots(1,1,figsize=(2.5,2.5))
+        fig, axes = plt.subplots(1,1,figsize=(2.5,2.5))
         plt.title(title)
         im = axes[0].pcolormesh(X,Y,data,cmap=cmap,vmin=vmin,vmax=vmax)
         fig.subplots_adjust(left=0.07,right=0.85,bottom=0.15)
@@ -88,12 +89,13 @@ def plot_scan_data(xpts,ypts,data,dedouble=False,convertunit=True,vmin=None,vmax
     return fig
 
 def plot_scan(filename,title=None, **kwargs):
-    header = sp.data.load(filename,delimiter=':').headers
-    xs = np.linspace(*[header[name] for name in ['Xstart (V)', 'Xstop (V)', 'Xpoints']])
-    ys = np.linspace(*[header[name] for name in ['Ystart ( V)', 'Ystop (V)', 'Ypoints']])
-    header = 0
+    scan = data.read(filename)
     if title is None:
         title = filename
-    data = np.array(sp.data.load(filename,delimiter=',')[:])
+    return plot_scan_data(scan)
     
-    return plot_scan_data(xs,ys,data,title=title,**kwargs)
+def plot_scan_data(scan, **kwargs):
+    xs = np.linspace(scan['Xstart (V)'], scan['Xstop (V)'], int(scan['Xpoints']))
+    ys = np.linspace(scan['Ystart (V)'], scan['Ystop (V)'], int(scan['Ypoints']))
+    
+    return plot_scan_raw(xs,ys,scan['data'],**kwargs)

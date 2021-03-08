@@ -1,46 +1,77 @@
-lines.linewidth : 1.25
+lines.linewidth : 1
 lines.markersize : 2
 
-font.size: 13
+font.size: 8
+font.family: sans-serif
 
-figure.figsize: 4,3
+figure.figsize: 3.35,1.75
+figure.dpi: 200
+figure.constrained_layout.use: True
+figure.subplot.left: 0.125
+figure.subplot.right: 1.0
 
 # GGplot
-axes.prop_cycle: cycler('color', ['E24A33', '348ABD', '988ED5', '777777', 'FBC15E', '8EBA42', 'FFB5B8'])
-#                   #E24A33 : red
-#                   #348ABD : blue
+axes.prop_cycle: cycler('color', ['ec1c23', '2e3191', '988ED5', '777777', 'F79931', '8EBA42', 'FFB5B8'])
+#                   #ec1c24 : red
+#                   #2e3191 : blue
 #                   #988ED5 : purple
 #                   #777777 : gray
-#                   #FBC15E : yellow
+#                   #f79931 : orange
 #                   #8EBA42 : green
 #                   #FFB5B8 : pink
 
 axes.labelsize: medium
-axes.titlesize: large
-axes.grid: True
-axes.linewidth: 1.0
+axes.titlesize: medium
+axes.grid: False
+axes.linewidth: 0.75
 axes.axisbelow: True
+axes.formatter.useoffset: False
+axes.formatter.use_mathtext: False
 
 grid.color: F0F0F0
 grid.linestyle: --
-grid.linewidth: 1
+grid.linewidth: 0.75
 
 xtick.direction: in
-xtick.major.width: 1
-xtick.major.size: 3
+xtick.major.width: 0.75
+xtick.major.size: 2.1
 xtick.minor.width: 0.75
-xtick.minor.size: 1.75
+xtick.minor.size: 1.4
 xtick.top: True
-
+xtick.labelsize: medium
+xtick.major.pad: 2
+xtick.minor.pad: 2
 
 ytick.direction: in
-ytick.major.width: 1
-ytick.major.size: 3
+ytick.major.width: 0.75
+ytick.major.size: 2.1
 ytick.minor.width: 0.75
-ytick.minor.size: 1.75
+ytick.minor.size: 1.4
 ytick.right: True
+ytick.labelsize: medium
+ytick.major.pad: 1
+ytick.minor.pad: 1
 
+legend.fontsize: medium
+#legend.frameon: False
+legend.edgecolor: 1.0
 legend.fancybox: True
-legend.handlelength: 1.0
+legend.labelspacing:0.1
+legend.borderpad: 0.0
+legend.borderaxespad: 0.6
+legend.handlelength: 2.0
+
+mathtext.default: regular
+#mathtext.fontset: dejavusans
 
 hist.bins: auto
+
+image.cmap: magma
+
+errorbar.capsize: 1
+
+agg.path.chunksize: 20000
+
+savefig.format: pdf
+savefig.bbox: tight
+savefig.transparent: True

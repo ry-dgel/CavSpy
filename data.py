@@ -27,10 +27,11 @@ def get_header(file):
     with open(file, "r") as f:
         i = 0
         for _, line in enumerate(f):
-            if re.search("[a-df-z]", line) is not None or line.strip() == "":
+            if re.search("[a-df-zA-DF-Z]", line) is not None or line.strip() == "":
                 i += 1
             else:
                 break
+                
         return i
 
 
@@ -68,6 +69,9 @@ def read(filename, **kwargs):
         with open(filename, 'rb') as f:
             if f.read(14).decode('utf-8') == 'SPINMOB_BINARY':
                 return read_sp_bin(filename, **kwargs)
+            f.seek(0)
+            if f.read(33) == "Scan data, number of header lines"
+                return read_scan(filename, **kwargs)
     except UnicodeDecodeError:
         pass
 
@@ -83,12 +87,12 @@ def read_csv(file, df=False, head=None, delim=None, **kwargs):
     file : string
         the path to the file. Pandas can also accept urls if that's helpful.
     df : bool, optional
-        if true, returns the pandas dataframe, else , by default False
+        if True, returns the pandas dataframe, else convert to a numpy array, by default False
     head : int, optional
         the line that contains the column names, by default will read the file for a line of data,
         and backtrack from there.
-    delim : [type], optional
-        [description], by default None
+    delim : str, optional
+        The character used to deliminate columns of data, by default will let pandas figure it out.
 
     Returns
     -------
@@ -99,7 +103,7 @@ def read_csv(file, df=False, head=None, delim=None, **kwargs):
         head = get_header(file)-1
         if head < 0:
             head = None
-    data = pd.read_csv(file, header=head+1, sep=delim, **kwargs)
+    data = pd.read_table(file, header=head, sep=delim, **kwargs)
 
     if df:
         return data
@@ -143,3 +147,25 @@ def unpack(filename, fields = [], delim=None):
 
     data_chunks = list(chunks.values())
     return data_chunks
+
+def read_scan(filename):
+    with open(filename, 'r') as scanfile:
+        head = scanfile.readline()
+        res = re.split(',|:', head)
+        head = int(res[2])
+    data = pd.read_csv(filename, skiprows=head, header=None)
+    data = data.to_numpy()
+    header = pd.read_csv(filename, skipfooter=data.shape[0], header=None, sep=':', engine='python')
+    # Massage loaded data into nicer dataframe
+    header = header.transpose()
+    header.columns = header.iloc[0]
+    header = header.drop(header.index[0])
+    header = header.drop('Scan data, number of header lines ',axis=1)
+    scan = header.to_dict(orient='records')[0]
+    try:
+        scan['Ystart (V)'] = scan.pop('Ystart ( V)')
+    except KeyError:
+        pass
+    scan.update({'data' : data})
+    return scan
+    
