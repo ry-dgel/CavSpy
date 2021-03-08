@@ -93,7 +93,7 @@ def plot_scan(filename,title=None, **kwargs):
     scan = data.read(filename)
     if title is None:
         title = filename
-    return plot_scan_data(scan)
+    return plot_scan_data(scan, **kwargs)
     
 def plot_scan_data(scan, **kwargs):
     xs = np.linspace(scan['Xstart (V)'], scan['Xstop (V)'], int(scan['Xpoints']))
