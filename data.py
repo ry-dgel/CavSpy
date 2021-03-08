@@ -69,7 +69,7 @@ def read(filename, **kwargs):
         with open(filename, 'rb') as f:
             if f.read(14).decode('utf-8') == 'SPINMOB_BINARY':
                 return read_sp_bin(filename, **kwargs)
-            f.seek(0)
+        with open(filename, 'r') as f:
             if f.read(33) == "Scan data, number of header lines":
                 return read_scan(filename, **kwargs)
     except UnicodeDecodeError:
