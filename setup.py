@@ -4,7 +4,7 @@ setup(name = 'cavspy',
       author = "Rigel Zifkin",
       author_email = "rydgel.code@gmail.com",
       url = "https://github.com/rydgel/CavSpy",
-      packages = ['cavspy'],
+      packages = ['CavSpy'],
       package_dir = {'CavSpy' : '.'},
       package_data = {'CavSpy' : ['style.mplstyle', 'minPar.so', 'minPar.dll']}
      )
