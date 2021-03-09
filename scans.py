@@ -96,7 +96,7 @@ def plot_scan(filename,title=None, **kwargs):
     return plot_scan_data(scan, **kwargs)
     
 def plot_scan_data(scan, **kwargs):
-    xs = np.linspace(scan['Xstart (V)'], scan['Xstop (V)'], int(scan['Xpoints']))
-    ys = np.linspace(scan['Ystart (V)'], scan['Ystop (V)'], int(scan['Ypoints']))
+    xs = np.linspace(float(scan['Xstart (V)']), float(scan['Xstop (V)']), int(scan['Xpoints']))
+    ys = np.linspace(float(scan['Ystart (V)']), float(scan['Ystop (V)']), int(scan['Ypoints']))
     
     return plot_scan_raw(xs,ys,scan['data'],**kwargs)
