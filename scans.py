@@ -14,7 +14,8 @@ def de_interleave(img_in, dedouble = True):
         for idx, row in enumerate(img_in):
             if np.mod(idx,2)==0:
                 img_1_out[idx]=row
-                img_1_out[idx+1]=row
+                if idx+1 < img_size[0]:
+                    img_1_out[idx+1]=row
             else:
                 img_2_out[idx-1]=row
                 img_2_out[idx]=row
