@@ -72,6 +72,9 @@ def read(filename, **kwargs):
         with open(filename, 'r') as f:
             if f.read(33) == "Scan data, number of header lines":
                 return read_scan(filename, **kwargs)
+        with open(filename, 'r') as f:
+            if f.read(29) == "#PicoHarp 300  Histogram Data":
+                return read_tcspc(filename, **kwargs)
     except UnicodeDecodeError:
         pass
 
@@ -148,7 +151,7 @@ def unpack(filename, fields = [], delim=None):
     data_chunks = list(chunks.values())
     return data_chunks
 
-def read_scan(filename):
+def read_scan(filename, **kwargs):
     with open(filename, 'r') as scanfile:
         head = scanfile.readline()
         res = re.split(',|:', head)
@@ -162,10 +165,50 @@ def read_scan(filename):
     header = header.drop(header.index[0])
     header = header.drop('Scan data, number of header lines ',axis=1)
     scan = header.to_dict(orient='records')[0]
+    
+    # Replace some annoying header names
     try:
         scan['Ystart (V)'] = scan.pop('Ystart ( V)')
     except KeyError:
         pass
+    try:
+        scan['scan_type'] = scan.pop('Scan type (0=triangle, 1=raster, 2=raster,slow return, 3=objective)')
+    except KeyError:
+        pass
+
     scan.update({'data' : data})
+    xs = np.linspace(float(scan['Xstart (V)']), float(scan['Xstop (V)']), int(scan['Xpoints']))
+    ys = np.linspace(float(scan['Ystart (V)']), float(scan['Ystop (V)']), int(scan['Ypoints']))
+    scan['Vxs'] = xs
+    scan['Vys'] = ys
     return scan
-    
+
+def read_tcspc(filename, cntr_time=True, **kwargs):
+    """ Sample File with Header:
+
+    #PicoHarp 300  Histogram Data			2021-03-22 04:00:21 PM
+    #channels per curve
+    65536
+    #display curve no.
+    0	
+    #memory block no.
+    0	
+    #ns/channel
+    0.0040	
+    #counts
+    0	
+    0
+    .
+    .
+    .	
+    """
+    with open(filename, 'r') as file:
+        head = [file.readline() for _ in range(10)]
+    chns = int(head[2])
+    ns_per_chn = float(head[8])
+    counts = pd.read_table(filename, sep=',', header=10, names=["counts"])
+    times = np.arange(0,(chns-1)*ns_per_chn,ns_per_chn)
+    if cntr_time:
+        times += ns_per_chn/2
+    counts.insert(0,"times",times)
+    return counts

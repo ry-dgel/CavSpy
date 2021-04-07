@@ -5,3 +5,4 @@ from . import compfun
 from . import uncert
 from . import paramopt
 from . import scans
+from . import lifetime

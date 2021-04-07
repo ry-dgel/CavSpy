@@ -32,7 +32,7 @@ def de_interleave(img_in, dedouble = True):
                 
     return img_1_out, img_2_out
 
-def plot_scan_raw(xpts,ypts,data,dedouble=True,convertunit=True,vmin=None,vmax=None,levels=30,title="",**kwargs):
+def plot_scan_raw(xpts,ypts,data,dedouble,converted=True,vmin=None,vmax=None,levels=30,title="",**kwargs):
     cmap = "viridis"
     if vmin is None:
         vmin = np.min(data)
@@ -47,9 +47,6 @@ def plot_scan_raw(xpts,ypts,data,dedouble=True,convertunit=True,vmin=None,vmax=N
     dy = np.mean(np.diff(ypts))
     ymesh = ypts - dy
     ymesh = np.append(ymesh,ypts[-1] + dy)
-    if convertunit:
-        xmesh *= 16 * 66 / 1000 # V/V * nm/V / nm/um
-        ymesh *= 16 * 66 / 1000
     X,Y = np.meshgrid(xmesh,ymesh)
     
     if dedouble:
@@ -66,7 +63,7 @@ def plot_scan_raw(xpts,ypts,data,dedouble=True,convertunit=True,vmin=None,vmax=N
             ax.set_ylim([min(ymesh),max(ymesh)])
         axes[0].set_title("Forward Scan")
         axes[1].set_title("Reverse Scan")
-        if convertunit:
+        if converted:
             axes[0].set_xlabel("X Position (um)")
             axes[1].set_xlabel("X Position (um)")
             axes[0].set_ylabel("Y Position (um)")
@@ -81,23 +78,47 @@ def plot_scan_raw(xpts,ypts,data,dedouble=True,convertunit=True,vmin=None,vmax=N
         fig.subplots_adjust(left=0.07,right=0.85,bottom=0.15)
         cbar_ax = fig.add_axes([0.88,0.15,0.025,0.7])
         fig.colorbar(im,cax=cbar_ax,extend='both')
-        ax.set_xlim([min(xpts),max(xpts)])
-        if convertunit:
+        axes[0].set_xlim([min(xpts),max(xpts)])
+        if converted:
             axes[0].set_xlabel("X Position (um)")
             axes[0].set_ylabel("Y Position (um)")
         else:
-            ax.set_xlabel("X Effective (V)")
-            ax.set_ylabel("Y Effective (V)")
+            axes[0].set_xlabel("X Effective (V)")
+            axes[0].set_ylabel("Y Effective (V)")
     return fig
 
-def plot_scan(filename,title=None, **kwargs):
+def plot_scan(filename,title=None, convert=True, **kwargs):
     scan = data.read(filename)
     if title is None:
         title = filename
-    return plot_scan_data(scan, **kwargs)
+    return plot_scan_data(scan, convert=True, **kwargs)
     
-def plot_scan_data(scan, **kwargs):
-    xs = np.linspace(float(scan['Xstart (V)']), float(scan['Xstop (V)']), int(scan['Xpoints']))
-    ys = np.linspace(float(scan['Ystart (V)']), float(scan['Ystop (V)']), int(scan['Ypoints']))
-    
-    return plot_scan_raw(xs,ys,scan['data'],**kwargs)
+def plot_scan_data(scan, convert=True, **kwargs):
+    dedouble = True if scan['scan_type'] == 0 else False
+    if convert:
+        try:
+            scan['xs']
+        except KeyError:
+            convert_units(scan)
+        return plot_scan_raw(scan['xs'],scan['ys'],scan['data'],dedouble,converted=True,**kwargs)
+
+    return plot_scan_raw(scan['Vxs'],scan['Vys'],scan['data'],dedouble,converted=False,**kwargs)
+
+def convert_units(scan, **kwargs):
+    scan_type = scan['scan_type']
+    xs = scan['Vxs']
+    ys = scan['Vys']
+
+    # Piezo scan, conversion is amplifier gain (V/V) times piezo sensitivity (nm/V) converted to um.
+    if scan_type == 0:
+        scan['xs'] = xs * -16 * 66 / 1000
+        scan['ys'] = ys * -16 * 66 / 1000
+    # Galvo scan, conversion is in um/V
+    if scan_type in [1,2]:
+        scan['xs'] = xs * 117
+        scan['ys'] = ys * 117
+    # Objective scan, y axis is position in um/12000, x axis is galvo, same as above.
+    # Negative values on the objective mean increasing height, so flip the sign for plotting.
+    if scan_type == 3:
+        scan['xs'] = xs * 117
+        scan['ys'] = ys * -12000 # Not sure why this is the factor, but it is
