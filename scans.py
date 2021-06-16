@@ -113,16 +113,24 @@ def convert_units(scan, pz_gain=None, gv_gain=None, **kwargs):
     if pz_gain is None:
         pz_gain = -17 * 77 / 1000
     if scan_type == 0:
+        if pz_gain < 0:
+            scan['data'] = np.flip(scan['data'])
         scan['xs'] = xs * pz_gain
         scan['ys'] = ys * pz_gain
     # Galvo scan, conversion is in um/V
     if gv_gain is None:
         gv_gain = 117
     if scan_type in [1,2]:
+        if gv_gain < 0:
+            scan['data'] = np.flip(scan['data'])
         scan['xs'] = xs * gv_gain
         scan['ys'] = ys * gv_gain
     # Objective scan, y axis is position in um/12000, x axis is galvo, same as above.
     # Negative values on the objective mean increasing height, so flip the sign for plotting.
     if scan_type == 3:
+        if gv_gain < 0:
+            scan['data'] = np.flip(scan[data])
+        else:
+            scan['data'] = np.flip(scan[data],axis=0)
         scan['xs'] = xs * gv_gain
         scan['ys'] = ys * -12000 # Not sure why this is the factor, but it is
