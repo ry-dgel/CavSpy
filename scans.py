@@ -104,21 +104,25 @@ def plot_scan_data(scan, convert=True, **kwargs):
 
     return plot_scan_raw(scan['Vxs'],scan['Vys'],scan['data'],dedouble,converted=False,**kwargs)
 
-def convert_units(scan, **kwargs):
+def convert_units(scan, pz_gain=None, gv_gain=None, **kwargs):
     scan_type = scan['scan_type']
     xs = scan['Vxs']
     ys = scan['Vys']
 
     # Piezo scan, conversion is amplifier gain (V/V) times piezo sensitivity (nm/V) converted to um.
+    if pz_gain is None:
+        pz_gain = -17 * 77 / 1000
     if scan_type == 0:
-        scan['xs'] = xs * -16 * 66 / 1000
-        scan['ys'] = ys * -16 * 66 / 1000
+        scan['xs'] = xs * pz_gain
+        scan['ys'] = ys * pz_gain
     # Galvo scan, conversion is in um/V
+    if gv_gain is None:
+        gv_gain = 117
     if scan_type in [1,2]:
-        scan['xs'] = xs * 117
-        scan['ys'] = ys * 117
+        scan['xs'] = xs * gv_gain
+        scan['ys'] = ys * gv_gain
     # Objective scan, y axis is position in um/12000, x axis is galvo, same as above.
     # Negative values on the objective mean increasing height, so flip the sign for plotting.
     if scan_type == 3:
-        scan['xs'] = xs * 117
+        scan['xs'] = xs * gv_gain
         scan['ys'] = ys * -12000 # Not sure why this is the factor, but it is
