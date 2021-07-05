@@ -104,7 +104,7 @@ def plot_scan_data(scan, convert=True, **kwargs):
 
     return plot_scan_raw(scan['Vxs'],scan['Vys'],scan['data'],dedouble,converted=False,**kwargs)
 
-def convert_units(scan, pz_gain=None, cpz_gain=None, gv_gain=None **kwargs):
+def convert_units(scan, pz_gain=None, cpz_gain=None, gv_gain=None, **kwargs):
     scan_type = scan['scan_type']
     xs = scan['Vxs']
     ys = scan['Vys']
