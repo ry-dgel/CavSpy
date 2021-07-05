@@ -8,6 +8,7 @@ setup(name = 'cavspy',
       package_dir = {'cavspy' : '.'},
       package_data = {'cavspy' : ['style.mplstyle', 'minPar.so', 'minPar.dll']},
       version_config={
+         "template": "{tag}.dev{sha}",
         "dirty_template": "{tag}.dev{sha}",
       },
       setup_requires=['setuptools-git-versioning'],
