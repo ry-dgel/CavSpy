@@ -104,7 +104,7 @@ def plot_scan_data(scan, convert=True, **kwargs):
 
     return plot_scan_raw(scan['Vxs'],scan['Vys'],scan['data'],dedouble,converted=False,**kwargs)
 
-def convert_units(scan, pz_gain=None, gv_gain=None, **kwargs):
+def convert_units(scan, pz_gain=None, cpz_gain=None, gv_gain=None **kwargs):
     scan_type = scan['scan_type']
     xs = scan['Vxs']
     ys = scan['Vys']
@@ -112,6 +112,7 @@ def convert_units(scan, pz_gain=None, gv_gain=None, **kwargs):
     # Piezo scan, conversion is amplifier gain (V/V) times piezo sensitivity (nm/V) converted to um.
     if pz_gain is None:
         pz_gain = -17 * 77 / 1000
+
     if scan_type == 0:
         if pz_gain < 0:
             scan['data'] = np.flip(scan['data'])
@@ -134,3 +135,15 @@ def convert_units(scan, pz_gain=None, gv_gain=None, **kwargs):
             scan['data'] = np.flip(scan[data],axis=0)
         scan['xs'] = xs * gv_gain
         scan['ys'] = ys * -12000 # Not sure why this is the factor, but it is
+    
+    # Cavity piezo gain for converting 3D scans
+    if cpz_gain is None:
+        cpz_gain = 1.5/640 # full stroke distance in um over full voltage range.
+    if scan_type == 5:
+        if pz_gain < 0:
+            scan['data'] = np.flip(scan['data'], axis=[0,1])
+        if cpz_gain < 0:
+            scan['data'] = np.flip(scan['data'], axis=2)
+        scan['xs'] = xs * pz_gain
+        scan['ys'] = ys * pz_gain
+        scan['zs'] = scan['Vzs'] * cpz_gain
