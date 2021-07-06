@@ -213,7 +213,8 @@ def load_3d_scan(filename, head=0):
 		page = list(map(lambda line: line.split(','), page)) 
 		page = np.array(page,dtype=np.float32)
 		processed_pages.append(page)
-	return np.dstack(processed_pages)
+	data = np.dstack(processed_pages)
+	return np.swapaxes(data,1,2)
 
 def read_tcspc(filename, cntr_time=True, **kwargs):
 	""" Sample File with Header:

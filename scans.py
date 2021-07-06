@@ -138,7 +138,7 @@ def convert_units(scan, pz_gain=None, cpz_gain=None, gv_gain=None, **kwargs):
     
     # Cavity piezo gain for converting 3D scans
     if cpz_gain is None:
-        cpz_gain = 1.5/640 # full stroke distance in um over full voltage range.
+        cpz_gain = 1.5/640 * -17 # full stroke distance in um over full voltage range.
     if scan_type == 5:
         if pz_gain < 0:
             scan['data'] = np.flip(scan['data'], axis=[0,1])
