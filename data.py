@@ -79,6 +79,9 @@ def read(filename, **kwargs):
         with open(filename, 'r') as f:
             if f.read(29) == "#PicoHarp 300  Histogram Data":
                 return read_tcspc(filename, **kwargs)
+        with open(filename, 'r') as f:
+            if f.read(5) == "date\t":
+                return read_michael_scan(filename, **kwargs)
     except UnicodeDecodeError:
         pass
 
@@ -200,6 +203,22 @@ def read_scan(filename, **kwargs):
     except KeyError:
         pass
     return scan
+
+def read_michael_scan(filename, kwargs):
+    data = sp.data.load(filename)
+    header = data.headers
+    scan = {'scan_type' : 2,
+            'Xstart (V)' : header['Vx_min'],
+            'Xstop (V)' : header['Vx_max'],
+            'Ystart (V)' : header['Vy_min'],
+            'Ystop (V)' : header['Vy_max'],
+            'Xpoints' : header['Nx'],
+            'Ypoints' : header['Ny']}
+    scan['data'] = np.array(data)
+    xs = np.linspace(float(scan['Xstart (V)']), float(scan['Xstop (V)']), int(scan['Xpoints']))
+    ys = np.linspace(float(scan['Ystart (V)']), float(scan['Ystop (V)']), int(scan['Ypoints']))
+    scan['Vxs'] = xs
+    scan['Vys'] = ys
 
 def load_2d_scan(filename, head):
     data = pd.read_csv(filename, skiprows=head, header=None)
