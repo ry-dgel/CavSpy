@@ -83,6 +83,7 @@ def read(filename, **kwargs):
             if f.read(4) == "date":
                 return read_michael_scan(filename, **kwargs)
     except UnicodeDecodeError:
+        print("Unicode Decore Error when Loading")
         pass
 
     return read_csv(filename, **kwargs)
@@ -204,7 +205,7 @@ def read_scan(filename, **kwargs):
         pass
     return scan
 
-def read_michael_scan(filename, kwargs):
+def read_michael_scan(filename, **kwargs):
     data = sp.data.load(filename)
     header = data.headers
     scan = {'scan_type' : 2,
@@ -219,7 +220,6 @@ def read_michael_scan(filename, kwargs):
     ys = np.linspace(float(scan['Ystart (V)']), float(scan['Ystop (V)']), int(scan['Ypoints']))
     scan['Vxs'] = xs
     scan['Vys'] = ys
-    print(scan)
     return scan
 
 def load_2d_scan(filename, head):
