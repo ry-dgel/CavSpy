@@ -80,7 +80,7 @@ def read(filename, **kwargs):
             if f.read(29) == "#PicoHarp 300  Histogram Data":
                 return read_tcspc(filename, **kwargs)
         with open(filename, 'r') as f:
-            if f.read(5) == "date\t":
+            if f.read(4) == "date":
                 return read_michael_scan(filename, **kwargs)
     except UnicodeDecodeError:
         pass
