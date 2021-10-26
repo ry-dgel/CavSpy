@@ -219,6 +219,7 @@ def read_michael_scan(filename, kwargs):
     ys = np.linspace(float(scan['Ystart (V)']), float(scan['Ystop (V)']), int(scan['Ypoints']))
     scan['Vxs'] = xs
     scan['Vys'] = ys
+    return scan
 
 def load_2d_scan(filename, head):
     data = pd.read_csv(filename, skiprows=head, header=None)
