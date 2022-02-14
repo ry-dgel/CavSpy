@@ -210,7 +210,7 @@ def white_length(filename, plot=False, disp=False, col=10,
     float, float
         The computer length in um, and FSR in MHz
     """
-    wl_data = _d.read_csv(filename, names=['wl','counts'],df=True,usecols=[0,10],head=0,skiprows=30,delim=',')
+    wl_data = _d.read_csv(filename, names=['wl','counts'],df=True,usecols=[0,col],head=0,skiprows=30,delim=',')
     wavelength = wl_data['wl'].to_numpy()
     counts = wl_data['counts'].to_numpy()
     if height is None:
